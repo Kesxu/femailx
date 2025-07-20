@@ -948,5 +948,55 @@ function formatFullDate(date) {
     }
 })();
 
+// --- Google Sign-In and Gmail API Integration ---
+window.handleGoogleSignIn = function(response) {
+    // Use Google Identity Services to get an access token
+    google.accounts.oauth2.initTokenClient({
+        client_id: '818233475525-bt537rb2bcv7t5emi20539h768e5fjfo.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/gmail.readonly',
+        callback: async (tokenResponse) => {
+            const accessToken = tokenResponse.access_token;
+            await fetchAndDisplayGmailEmails(accessToken);
+        }
+    }).requestAccessToken();
+};
+
+async function fetchAndDisplayGmailEmails(accessToken) {
+    // Fetch list of message IDs
+    const listRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const listData = await listRes.json();
+    const messages = listData.messages || [];
+
+    // Fetch details for each message
+    const emailItemsArr = [];
+    for (const msg of messages) {
+        const msgRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msg.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`, {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const msgData = await msgRes.json();
+        const headers = msgData.payload.headers;
+        const from = headers.find(h => h.name === 'From')?.value || '';
+        const subject = headers.find(h => h.name === 'Subject')?.value || '';
+        const date = headers.find(h => h.name === 'Date')?.value || '';
+        emailItemsArr.push({ from, subject, date });
+    }
+
+    // Render emails in your email list
+    const emailList = document.getElementById('email-items');
+    emailList.innerHTML = '';
+    emailItemsArr.forEach(email => {
+        emailList.innerHTML += `
+            <div class="email-item">
+                <div class="email-select"><input type="checkbox"></div>
+                <div class="email-sender">${email.from}</div>
+                <div class="email-subject">${email.subject}</div>
+                <div class="email-date">${email.date}</div>
+            </div>
+        `;
+    });
+}
+
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
