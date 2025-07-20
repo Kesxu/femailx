@@ -949,6 +949,9 @@ function formatFullDate(date) {
 })();
 
 // --- Google Sign-In and Gmail API Integration ---
+const fetchEmailsBtn = document.getElementById('fetch-emails-btn');
+if (fetchEmailsBtn) fetchEmailsBtn.style.display = 'none';
+
 window.handleGoogleSignIn = function(response) {
     // Use Google Identity Services to get an access token
     google.accounts.oauth2.initTokenClient({
@@ -956,7 +959,11 @@ window.handleGoogleSignIn = function(response) {
         scope: 'https://www.googleapis.com/auth/gmail.readonly',
         callback: async (tokenResponse) => {
             const accessToken = tokenResponse.access_token;
-            await fetchAndDisplayGmailEmails(accessToken);
+            // Show the Fetch Emails button
+            if (fetchEmailsBtn) {
+                fetchEmailsBtn.style.display = 'inline-block';
+                fetchEmailsBtn.onclick = () => fetchAndDisplayGmailEmails(accessToken);
+            }
         }
     }).requestAccessToken();
 };
