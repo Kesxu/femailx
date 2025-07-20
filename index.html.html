@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Email Organizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Loading indicator styles -->
+    <style>
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-color);
+            font-style: italic;
+        }
+        .loading:before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>College Email Organizer</h1>
+            <div class="user-profile">
+                <span id="user-email"><i class="fas fa-user-circle"></i> Not connected</span>
+                <button id="connect-btn"><i class="fas fa-plug"></i> Connect to Email</button>
+                <button id="logout-btn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="folders">
+                    <h2>Folders</h2>
+                    <ul id="folder-list">
+                        <li class="active"><i class="fas fa-inbox"></i>Inbox</li>
+                        <li><i class="fas fa-star"></i>Important</li>
+                        <li><i class="fas fa-graduation-cap"></i>Classes</li>
+                        <li><i class="fas fa-tasks"></i>Assignments</li>
+                        <li><i class="fas fa-calendar-alt"></i>Events</li>
+                        <li><i class="fas fa-university"></i>Administrative</li>
+                    </ul>
+                    <button id="add-folder-btn"><i class="fas fa-folder-plus"></i> Add Folder</button>
+                </div>
+                <div class="calendar">
+                    <h2>Calendar</h2>
+                    <div class="calendar-header">
+                        <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                        <span id="current-month">March 2024</span>
+                        <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-days">
+                            <span>Su</span>
+                            <span>Mo</span>
+                            <span>Tu</span>
+                            <span>We</span>
+                            <span>Th</span>
+                            <span>Fr</span>
+                            <span>Sa</span>
+                        </div>
+                        <div id="calendar-dates" class="calendar-dates">
+                            <!-- Calendar dates will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="filters">
+                    <h2>Filters</h2>
+                    <div class="filter-item">
+                        <input type="checkbox" id="unread-filter">
+                        <label for="unread-filter">Unread</label>
+                    </div>
+                    <div class="filter-item">
+                        <input type="checkbox" id="attachments-filter">
+                        <label for="attachments-filter">With Attachments</label>
+                    </div>
+                    <div class="filter-item">
+                        <input type="checkbox" id="flagged-filter">
+                        <label for="flagged-filter">Flagged</label>
+                    </div>
+                    <div class="date-filter">
+                        <label for="date-range">Date Range:</label>
+                        <select id="date-range">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="custom">Custom...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="email-list-container">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search emails...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="email-list">
+                    <div class="email-list-header">
+                        <div class="email-select"><input type="checkbox" id="select-all"></div>
+                        <div class="email-sender">Sender</div>
+                        <div class="email-subject">Subject</div>
+                        <div class="email-date">Date</div>
+                    </div>
+                    <div id="email-items">
+                        <!-- Email items will be populated here -->
+                        <div class="email-item unread">
+                            <div class="email-select"><input type="checkbox"></div>
+                            <div class="email-sender">Financial Aid Office</div>
+                            <div class="email-subject">Important: Scholarship Deadline Approaching</div>
+                            <div class="email-date">10:30 AM</div>
+                        </div>
+                        <div class="email-item">
+                            <div class="email-select"><input type="checkbox"></div>
+                            <div class="email-sender">Professor Smith</div>
+                            <div class="email-subject">Assignment #3 Feedback</div>
+                            <div class="email-date">Yesterday</div>
+                        </div>
+                        <div class="email-item unread">
+                            <div class="email-select"><input type="checkbox"></div>
+                            <div class="email-sender">Student Activities</div>
+                            <div class="email-subject">Campus Event: Tech Talk This Friday</div>
+                            <div class="email-date">Mar 15</div>
+                        </div>
+                        <div class="email-item">
+                            <div class="email-select"><input type="checkbox"></div>
+                            <div class="email-sender">Library</div>
+                            <div class="email-subject">Book Return Reminder</div>
+                            <div class="email-date">Mar 12</div>
+                        </div>
+                        <div class="email-item">
+                            <div class="email-select"><input type="checkbox"></div>
+                            <div class="email-sender">Academic Advising</div>
+                            <div class="email-subject">Registration for Fall Semester Opens Next Week</div>
+                            <div class="email-date">Mar 10</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="email-view">
+                <div class="email-view-header">
+                    <h2 id="view-subject">Important: Scholarship Deadline Approaching</h2>
+                    <div class="email-actions">
+                        <button id="reply-btn"><i class="fas fa-reply"></i> Reply</button>
+                        <button id="forward-btn"><i class="fas fa-share"></i> Forward</button>
+                        <button id="archive-btn"><i class="fas fa-archive"></i> Archive</button>
+                        <button id="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </div>
+                </div>
+                <div class="email-view-info">
+                    <div id="view-sender">From: Financial Aid Office &lt;financial.aid@college.edu&gt;</div>
+                    <div id="view-recipient">To: You &lt;your.email@college.edu&gt;</div>
+                    <div id="view-date">March 16, 2023 10:30 AM</div>
+                </div>
+                <div class="email-view-body" id="view-body">
+                    <p>Dear Student,</p>
+                    <p>This is a reminder that the deadline for submitting your scholarship application for the upcoming academic year is March 31, 2023.</p>
+                    <p>Please ensure that all required documents are uploaded to your student portal before the deadline. Late applications will not be considered.</p>
+                    <p>If you have any questions or need assistance with your application, please visit our office during business hours or reply to this email.</p>
+                    <p>Best regards,<br>Financial Aid Office</p>
+                </div>
+                <div class="email-view-attachments" id="view-attachments">
+                    <h3><i class="fas fa-paperclip"></i>Attachments</h3>
+                    <div class="attachment-item">
+                        <span class="attachment-icon"><i class="fas fa-file-pdf"></i></span>
+                        <span class="attachment-name">Scholarship_Guidelines.pdf</span>
+                        <button class="attachment-download"><i class="fas fa-download"></i> Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="connection-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal"><i class="fas fa-times"></i></span>
+            <h2><i class="fas fa-plug"></i> Connect to Email Platform</h2>
+            <form id="connection-form">
+                <div class="form-group">
+                    <label for="email-provider"><i class="fas fa-server"></i> Email Provider:</label>
+                    <select id="email-provider">
+                        <option value="college">College Email System</option>
+                        <option value="gmail">Gmail</option>
+                        <option value="outlook">Outlook</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="email-address"><i class="fas fa-envelope"></i> Email Address:</label>
+                    <input type="email" id="email-address" placeholder="your.name@college.edu" required>
+                </div>
+                <div class="form-group">
+                    <label for="email-password"><i class="fas fa-lock"></i> Password:</label>
+                    <input type="password" id="email-password" placeholder="Your password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="connect-submit"><i class="fas fa-check-circle"></i> Connect</button>
+                    <button type="button" id="cancel-connect"><i class="fas fa-times-circle"></i> Cancel</button>
+                </div>
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="#" id="signup-link">Sign up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal"><i class="fas fa-times"></i></span>
+            <h2><i class="fas fa-user-plus"></i> Create New Account</h2>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name"><i class="fas fa-user"></i> Full Name:</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email"><i class="fas fa-envelope"></i> Email Address:</label>
+                    <input type="email" id="signup-email" placeholder="your.name@college.edu" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password"><i class="fas fa-lock"></i> Password:</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password"><i class="fas fa-lock"></i> Confirm Password:</label>
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-provider"><i class="fas fa-server"></i> Email Provider:</label>
+                    <select id="signup-provider">
+                        <option value="college">College Email System</option>
+                        <option value="gmail">Gmail</option>
+                        <option value="outlook">Outlook</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="signup-submit"><i class="fas fa-user-plus"></i> Create Account</button>
+                    <button type="button" id="cancel-signup"><i class="fas fa-times-circle"></i> Cancel</button>
+                </div>
+                <div class="form-footer">
+                    <p>Already have an account? <a href="#" id="login-link">Log in</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-folder-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal"><i class="fas fa-times"></i></span>
+            <h2><i class="fas fa-folder-plus"></i> Add New Folder</h2>
+            <form id="add-folder-form">
+                <div class="form-group">
+                    <label for="folder-name"><i class="fas fa-tag"></i> Folder Name:</label>
+                    <input type="text" id="folder-name" placeholder="Enter folder name" required>
+                </div>
+                <div class="form-group">
+                    <label for="folder-color"><i class="fas fa-palette"></i> Folder Color:</label>
+                    <input type="color" id="folder-color" value="#5b6af5">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="add-folder-submit"><i class="fas fa-plus-circle"></i> Add Folder</button>
+                    <button type="button" id="cancel-add-folder"><i class="fas fa-times-circle"></i> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Email API Integration -->
+    <script src="email-api.js"></script>
+    <!-- Main Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
