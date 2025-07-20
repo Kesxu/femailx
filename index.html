@@ -283,6 +283,23 @@
         </div>
     </div>
 
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload"
+         data-client_id="818233475525-bt537rb2bcv7t5emi20539h768e5fjfo.apps.googleusercontent.com "
+         data-callback="handleGoogleSignIn"
+         data-scope="https://www.googleapis.com/auth/gmail.readonly"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+    </div>
+
     <!-- Email API Integration -->
     <script src="email-api.js"></script>
     <!-- Main Application Script -->
